@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>东西即兴人格测试</title>
+    <style>
+        :root {
+            --bg: #fdf8f3;
+            --card: #ffffff;
+            --text: #3d3430;
+            --text-light: #6b5e58;
+            --accent: #e8813b;
+            --accent-soft: #fff5ed;
+            --progress-bg: #ede4db;
+            --shadow: 0 2px 16px rgba(60, 40, 20, 0.07);
+            --shadow-hover: 0 4px 24px rgba(60, 40, 20, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: var(--font-stack);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px 16px 60px;
+            line-height: 1.6;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            text-align: center;
+            padding: 10px 0 0;
+            position: relative;
+        }
+        .lang-switch {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #fff;
+            border: 1.5px solid #ddd;
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6b5e58;
+            transition: all var(--transition);
+            z-index: 2;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .lang-switch:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #fffaf5;
+        }
+        .header .brand-icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 6px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            color: #3d3430;
+            margin: 0;
+        }
+        .header .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 4px;
+            letter-spacing: 0.04em;
+        }
+        .progress-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 4px;
+        }
+        .progress-bar-outer {
+            flex: 1;
+            height: 6px;
+            background: var(--progress-bg);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+        .progress-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 500;
+            white-space: nowrap;
+            min-width: 36px;
+            text-align: right;
+        }
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+        .section-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            font-weight: 600;
+            background: var(--accent-soft);
+            padding: 4px 10px;
+            border-radius: 20px;
+            align-self: flex-start;
+        }
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.6;
+            color: var(--text);
+            margin: 0;
+        }
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option-btn {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            width: 100%;
+            text-align: left;
+            padding: 14px 16px;
+            border: 2px solid #ede4db;
+            border-radius: var(--radius-sm);
+            background: #fefcf9;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text);
+            transition: all var(--transition);
+            font-family: var(--font-stack);
+            line-height: 1.5;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .option-btn:hover {
+            border-color: var(--accent);
+            background: #fffaf5;
+            transform: translateX(2px);
+        }
+        .option-btn:active {
+            transform: scale(0.985);
+            transition: 0.1s ease;
+        }
+        .option-btn.selected {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            box-shadow: 0 0 0 3px rgba(232, 129, 59, 0.08);
+        }
+        .option-letter {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ede4db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #6b5e58;
+            transition: all var(--transition);
+        }
+        .option-btn.selected .option-letter {
+            background: var(--accent);
+            color: #fff;
+            animation: popLetter 0.3s ease;
+        }
+        @keyframes popLetter {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 13px 28px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition);
+            font-family: var(--font-stack);
+            letter-spacing: 0.02em;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(232, 129, 59, 0.3);
+        }
+        .btn-primary:hover {
+            background: #d47430;
+            box-shadow: 0 6px 20px rgba(232, 129, 59, 0.4);
+            transform: translateY(-1px);
+        }
+        .btn-primary:disabled {
+            background: #c9bdb0;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #d4c8bb;
+            color: #6b5e58;
+        }
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .result-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeInUp 0.5s ease;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-emoji {
+            font-size: 72px;
+            display: block;
+            animation: float 2.5s ease-in-out infinite;
+        }
+        .result-type-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+        .result-tagline {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+        .result-divider {
+            width: 48px;
+            height: 3px;
+            border-radius: 3px;
+            margin: 0 auto;
+        }
+        .result-desc {
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #4a3f3a;
+            background: #fefcf9;
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+        }
+        .result-desc p {
+            margin-bottom: 8px;
+        }
+        .result-desc p:last-child {
+            margin-bottom: 0;
+        }
+        .result-badge {
+            display: inline-block;
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+        .result-extra {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            background: #fefcf9;
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            text-align: left;
+            border-left: 3px solid var(--accent);
+        }
+        .multi-result {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .multi-result .result-card {
+            padding: 24px 20px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        /* 错误弹窗样式 */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .popup-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px 32px;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .popup-text {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #d44;
+            margin-bottom: 24px;
+            line-height: 1.3;
+        }
+        .popup-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            width: 100%;
+        }
+        .popup-btn:hover {
+            background: #d47430;
+        }
+        @media (max-width: 420px) {
+            .header h1 { font-size: 1.4rem; }
+            .card { padding: 20px 16px; gap: 14px; }
+            .question-text { font-size: 1rem; }
+            .option-btn { padding: 12px 14px; font-size: 0.9rem; gap: 10px; }
+            .option-letter { width: 28px; height: 28px; font-size: 0.75rem; }
+            .result-emoji { font-size: 56px; }
+            .result-type-name { font-size: 1.3rem; }
+            .btn { padding: 12px 22px; font-size: 0.9rem; }
+            .lang-switch { padding: 4px 10px; font-size: 0.7rem; }
+            .popup-text { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <button class="lang-switch" id="langSwitch" onclick="toggleLanguage()">
+                <span>🌐</span> <span id="langLabel">EN</span>
+            </button>
+            <span class="brand-icon">🌏🎭</span>
+            <h1 id="mainTitle">东西即兴人格测试</h1>
+            <p class="subtitle" id="mainSubtitle">15道题，找到你在即兴宇宙里的专属角色</p>
+        </div>
+        <div class="progress-wrap hidden" id="progressWrap">
+            <div class="progress-bar-outer">
+                <div class="progress-bar-inner" id="progressBar" style="width: 0%;"></div>
+            </div>
+            <span class="progress-label" id="progressLabel">0/15</span>
+        </div>
+        <div id="contentArea"></div>
+    </div>
+    <script>
+        (function() {
+            let currentLang = 'zh';
+
+            // 题目数据
+            const quizData = {
+                zh: [
+                    { section: '第一部分：舞台上的本能', question: '在即兴游戏开始时，你脑子里第一个念头通常是？', options: [
+                        { letter: 'A', text: '我要看看队友想干嘛，全力配合他/她。' },
+                        { letter: 'B', text: '我要用身体做一个很有趣、很奇怪的姿势。' },
+                        { letter: 'C', text: '我听到了一个特别的词，想把它变成一个有趣的世界观。' },
+                        { letter: 'D', text: '我想观察台下观众的表情，找一个能逗笑他们的点。' }
+                    ]},
+                    { section: '第一部分：舞台上的本能', question: '当一个场景突然冷场，空气突然安静时，你会？', options: [
+                        { letter: 'A', text: '享受这几秒沉默，觉得情绪流动比硬填词更重要。' },
+                        { letter: 'B', text: '走上去做一个具体的家务动作（比如切菜、扫地），用行动打破尴尬。' },
+                        { letter: 'C', text: '突然说一句看似无关但很诗意的话，比如“外面的雨好像停了”。' },
+                        { letter: 'D', text: '拍拍队友肩膀，对他/她做一个鬼脸，把压力变成玩笑。' }
+                    ]},
+                    { section: '第一部分：舞台上的本能', question: '对于舞台上的“犯错”或“口误”，你的态度是？', options: [
+                        { letter: 'A', text: '那是礼物。顺着错误走下去往往能开出最意想不到的花。' },
+                        { letter: 'B', text: '立刻承认并放大它，把失误变成角色的标签。' },
+                        { letter: 'C', text: '大脑飞速运转，试图在逻辑上给这个失误找一个合理的解释。' },
+                        { letter: 'D', text: '看观众反应，如果他们笑了，那就重复再做一次！' }
+                    ]},
+                    { section: '第二部分：创作与表达的习惯', question: '如果要你讲一个故事，你更擅长描述？', options: [
+                        { letter: 'A', text: '人与人之间细腻的、难以言说的情感纠葛。' },
+                        { letter: 'B', text: '一个有着奇怪癖好的小人物的一天。' },
+                        { letter: 'C', text: '一个发生在遥远星系或魔法国度的架空设定。' },
+                        { letter: 'D', text: '一个大家都经历过的生活囧事，然后把它讲得活灵活现。' }
+                    ]},
+                    { section: '第二部分：创作与表达的习惯', question: '在跨文化的即兴环境中（比如有外国队友），你会怎么做？', options: [
+                        { letter: 'A', text: '更多地用眼神和肢体去感知对方，语言不通反而觉得更有趣。' },
+                        { letter: 'B', text: '刻意放慢语速，用更夸张、视觉化的肢体语言来跨越障碍。' },
+                        { letter: 'C', text: '很好奇对方的母语会怎么表达，甚至想学一两句他们的语言塞进戏里。' },
+                        { letter: 'D', text: '试图找一个大家文化里共通的槽点来建立连接。' }
+                    ]},
+                    { section: '第二部分：创作与表达的习惯', question: '你最受不了剧本或电影里的哪种桥段？', options: [
+                        { letter: 'A', text: '明明眼神就能交代的情绪，非要靠大段独白说出来。' },
+                        { letter: 'B', text: '所有人都是正常人，没有一点怪癖，生活得像样板间。' },
+                        { letter: 'C', text: '剧情逻辑有硬伤，看得人一头问号。' },
+                        { letter: 'D', text: '强行煽情或者强行说教，不给人留白思考的余地。' }
+                    ]},
+                    { section: '第三部分：社群生活的底色', question: '在东西即兴的线下Jam结束后，你通常会？', options: [
+                        { letter: 'A', text: '找刚才在台上和你有强烈化学反应的人，单独聊几句刚才的某个瞬间。' },
+                        { letter: 'B', text: '帮大家收拾椅子、整理场地，或者招呼大家一起去吃宵夜。' },
+                        { letter: 'C', text: '找一个安静的角落，在手机备忘录里记下今晚触动到你的灵感。' },
+                        { letter: 'D', text: '成为合照里最搞怪、笑得最开心的那一个。' }
+                    ]},
+                    { section: '第三部分：社群生活的底色', question: '如果社群需要你帮忙，你最愿意贡献哪种技能？', options: [
+                        { letter: 'A', text: '帮大家做即兴翻译，或者协助沟通外国老师和同学。' },
+                        { letter: 'B', text: '体力活没问题，或者负责买水、准备道具。' },
+                        { letter: 'C', text: '写文案、编段子、设计海报或者给演出起名字。' },
+                        { letter: 'D', text: '负责热场子，带动气氛，让新来的朋友不感到拘束。' }
+                    ]},
+                    { section: '第三部分：社群生活的底色', question: '你如何看待社群里的“冲突”或“不同意见”？', options: [
+                        { letter: 'A', text: '这是高语境文化和低语境文化的正常碰撞，说出来就好了。' },
+                        { letter: 'B', text: '其实只要一起吃顿饭，大家就会发现对方都是可爱的人。' },
+                        { letter: 'C', text: '我会试图分析冲突背后的逻辑差异，然后写一篇小作文发在群里。' },
+                        { letter: 'D', text: '打个哈哈，用一个即兴游戏让大家把这事儿翻篇。' }
+                    ]},
+                    { section: '第三部分：社群生活的底色', question: '东西即兴每周四晚上的即兴活动在上海的哪条路？', options: [
+                        { letter: 'A', text: '新华路' },
+                        { letter: 'B', text: '旧华路' }
+                    ]},
+                    { section: '第四部分：看待世界的方式', question: '给你一个词“边界”，你第一反应是？', options: [
+                        { letter: 'A', text: '是用来跨越和试探的，戏剧冲突往往就在边界线上。' },
+                        { letter: 'B', text: '是用来打破的。即兴就是要做生活里不敢做的事。' },
+                        { letter: 'C', text: '是一个有趣的命题，可以写一篇探讨社会规训的独角戏。' },
+                        { letter: 'D', text: '是安全感。好的即兴是在有边界的安全网里尽情跳跃。' }
+                    ]},
+                    { section: '第四部分：看待世界的方式', question: '你觉得“东西即兴”这个社群的灵魂是什么？', options: [
+                        { letter: 'A', text: '对不同文化背景的尊重与好奇，能在差异中找到共鸣。' },
+                        { letter: 'B', text: '允许任何人做任何奇怪的事情，在这里怪胎就是正常人。' },
+                        { letter: 'C', text: '一种智性上的快乐，用即兴解构生活里的一切。' },
+                        { letter: 'D', text: '是一群不需要太多解释就能玩到一起的伙伴。' }
+                    ]},
+                    { section: '第五部分：终极选择', question: '演出即将开始，但你发现道具少了一件关键的，你会？', options: [
+                        { letter: 'A', text: '太好了，不用被道具束缚了，我们用无实物表演来创造它。' },
+                        { letter: 'B', text: '扫视全场，看看有什么别的能替代，甚至替代品比原版更好笑。' },
+                        { letter: 'C', text: '即兴修改开场词，把道具消失变成剧情的一部分。' },
+                        { letter: 'D', text: '问现场观众借，借不到的话就借这个互动本身当个梗。' }
+                    ]},
+                    { section: '第五部分：终极选择', question: '如果有人评价你的即兴表演“太过于自我”，你会？', options: [
+                        { letter: 'A', text: '反思自己是不是没接住队友给的信号，下次要多听。' },
+                        { letter: 'B', text: '思考是不是自己的肢体或者角色太抢戏了，但保留那个奇怪的闪光点。' },
+                        { letter: 'C', text: '“自我”是因为我有强烈的表达欲，也许我只是需要一个更懂我的队友。' },
+                        { letter: 'D', text: '开玩笑地回他：“因为刚才那一秒，场上只有我配得上那个时刻！”' }
+                    ]},
+                    { section: '第五部分：终极选择', question: '你希望即兴带给你未来生活最大的改变是？', options: [
+                        { letter: 'A', text: '成为一个更能读懂空气、更敏锐的“人类观察家”。' },
+                        { letter: 'B', text: '在不确定的生活里，拥有随时说“Yes, and”的勇气。' },
+                        { letter: 'C', text: '为我自己的文学/影视创作，找到源源不断的真实素材。' },
+                        { letter: 'D', text: '在上海这座昂贵的城市里，找到一群可以一起傻笑的家人。' }
+                    ]}
+                ],
+                en: [
+                    { section: 'Part 1: Stage Instincts', question: 'When an improv game begins, your first thought is usually...', options: [
+                        { letter: 'A', text: 'I want to see what my scene partner is going for and fully support them.' },
+                        { letter: 'B', text: 'I want to strike a weird, interesting pose with my body.' },
+                        { letter: 'C', text: 'I heard a peculiar word—I want to turn it into a fascinating world.' },
+                        { letter: 'D', text: 'I want to scan the audience and find a moment that will crack them up.' }
+                    ]},
+                    { section: 'Part 1: Stage Instincts', question: 'When a scene suddenly goes quiet, you...', options: [
+                        { letter: 'A', text: 'Savor those seconds of silence—emotional flow matters more than forcing words.' },
+                        { letter: 'B', text: 'Walk on and do a concrete household task (like chopping veggies) to break the ice with action.' },
+                        { letter: 'C', text: 'Drop a seemingly random but poetic line, like "I think the rain just stopped outside."' },
+                        { letter: 'D', text: 'Pat your partner on the shoulder and make a goofy face, turning the tension into a shared joke.' }
+                    ]},
+                    { section: 'Part 1: Stage Instincts', question: 'Your attitude toward a "mistake" or slip of the tongue on stage?', options: [
+                        { letter: 'A', text: 'It’s a gift. Following the mistake often leads to the most unexpected bloom.' },
+                        { letter: 'B', text: 'Acknowledge it instantly and exaggerate it—turn the flub into the character’s trademark.' },
+                        { letter: 'C', text: 'My brain kicks into high gear, trying to retrofit a logical explanation.' },
+                        { letter: 'D', text: 'Check the audience—if they laughed, do it again!' }
+                    ]},
+                    { section: 'Part 2: Creative Habits', question: 'When telling a story, you’re better at describing...', options: [
+                        { letter: 'A', text: 'Delicate, almost unspeakable emotional entanglements between people.' },
+                        { letter: 'B', text: 'A day in the life of a little character with a wonderfully odd quirk.' },
+                        { letter: 'C', text: 'A world-building premise set in a faraway galaxy or magical realm.' },
+                        { letter: 'D', text: 'A universally relatable awkward life moment, told with vivid humor.' }
+                    ]},
+                    { section: 'Part 2: Creative Habits', question: 'In a cross-cultural improv setting (e.g. with international players), you tend to...', options: [
+                        { letter: 'A', text: 'Rely more on eye contact and physicality—the language gap actually makes it more interesting.' },
+                        { letter: 'B', text: 'Slow down deliberately and use bigger, more visual gestures to bridge the divide.' },
+                        { letter: 'C', text: 'Get curious about how they’d say something in their mother tongue, maybe even borrow a phrase for the scene.' },
+                        { letter: 'D', text: 'Look for a universally shared pet peeve or cultural quirk to connect over.' }
+                    ]},
+                    { section: 'Part 2: Creative Habits', question: 'What kind of scene in a movie or script bugs you the most?', options: [
+                        { letter: 'A', text: 'Emotions that could be conveyed with a single glance, but instead get a long monologue.' },
+                        { letter: 'B', text: 'Everyone is "normal" with zero quirks—living like they’re in a showroom catalog.' },
+                        { letter: 'C', text: 'Plot holes that make zero logical sense.' },
+                        { letter: 'D', text: 'Forced tear-jerking or preaching that leaves no breathing room for the audience.' }
+                    ]},
+                    { section: 'Part 3: Community Life', question: 'After a DongXi Improv jam, you usually...', options: [
+                        { letter: 'A', text: 'Find the person you had the strongest chemistry with on stage and chat about a specific moment.' },
+                        { letter: 'B', text: 'Help stack chairs, tidy up, or rally everyone to grab late-night eats together.' },
+                        { letter: 'C', text: 'Find a quiet corner and jot down the sparks of inspiration that hit you that night.' },
+                        { letter: 'D', text: 'Be the goofiest, most gleeful face in the group photo.' }
+                    ]},
+                    { section: 'Part 3: Community Life', question: 'If the community needs a hand, what skill are you most willing to offer?', options: [
+                        { letter: 'A', text: 'Help with improv translation, or bridge communication between international coaches and members.' },
+                        { letter: 'B', text: 'Physical setup, or simply being the person who brings water and props.' },
+                        { letter: 'C', text: 'Writing copy, crafting bits, designing posters, or naming the show.' },
+                        { letter: 'D', text: 'Warm up the room, hype the vibe, and make newcomers feel instantly at home.' }
+                    ]},
+                    { section: 'Part 3: Community Life', question: 'How do you see "conflict" or disagreement within the community?', options: [
+                        { letter: 'A', text: 'It’s a natural collision of high-context and low-context cultures—talking it out usually solves it.' },
+                        { letter: 'B', text: 'Honestly, just sharing a meal together reveals that everyone’s actually lovely.' },
+                        { letter: 'C', text: 'I’d analyze the logic gap behind the conflict, maybe write a little essay in the group chat.' },
+                        { letter: 'D', text: 'Laugh it off and suggest an improv game to turn the page.' }
+                    ]},
+                    { section: 'Part 3: Community Life', question: 'Which street hosts DongXi Improv’s regular Thursday night jam in Shanghai?', options: [
+                        { letter: 'A', text: 'Xinhua Road (新华路)' },
+                        { letter: 'B', text: 'Jiuhua Road (旧华路)' }
+                    ]},
+                    { section: 'Part 4: Worldview', question: 'The word "boundary" — your first reaction?', options: [
+                        { letter: 'A', text: 'Something to cross and test—dramatic tension lives right on the boundary line.' },
+                        { letter: 'B', text: 'Something to break. Improv is about doing the things you’d never dare in real life.' },
+                        { letter: 'C', text: 'A fascinating concept—could write a one-person show exploring social conditioning.' },
+                        { letter: 'D', text: 'Safety. Good improv leaps freely within a well-held safety net of boundaries.' }
+                    ]},
+                    { section: 'Part 4: Worldview', question: 'What do you think is the soul of DongXi Improv?', options: [
+                        { letter: 'A', text: 'Respect and curiosity for different cultural backgrounds, finding resonance in difference.' },
+                        { letter: 'B', text: 'Permission to do any weird thing—here, the oddballs are the normal ones.' },
+                        { letter: 'C', text: 'An intellectual joy, deconstructing everyday life through improv.' },
+                        { letter: 'D', text: 'A bunch of people who can play together without needing too many words.' }
+                    ]},
+                    { section: 'Part 5: Final Choices', question: 'The show is about to start, but a key prop is missing. You...', options: [
+                        { letter: 'A', text: 'Great! No prop to tie us down—let’s create it with object work.' },
+                        { letter: 'B', text: 'Scan the room for a substitute, and the replacement ends up being funnier than the original.' },
+                        { letter: 'C', text: 'Improvise a new opening line that makes the missing prop part of the story.' },
+                        { letter: 'D', text: 'Ask the audience if we can borrow one—if not, turn the interaction itself into a running gag.' }
+                    ]},
+                    { section: 'Part 5: Final Choices', question: 'If someone calls your improv "too self-centered", you...', options: [
+                        { letter: 'A', text: 'Reflect on whether I missed my partner’s cues, and resolve to listen more next time.' },
+                        { letter: 'B', text: 'Wonder if my physicality or character stole focus, but I’ll keep that weird spark.' },
+                        { letter: 'C', text: '"Self-centered" because I have a strong expressive urge—maybe I just need a partner who gets me.' },
+                        { letter: 'D', text: 'Jokingly reply, "Because in that second, I was the only one worthy of that moment!"' }
+                    ]},
+                    { section: 'Part 5: Final Choices', question: 'The biggest change you hope improv will bring to your life?', options: [
+                        { letter: 'A', text: 'Becoming a sharper observer of human vibes, someone who can truly read the room.' },
+                        { letter: 'B', text: 'Gaining the courage to say "Yes, and" in the face of life’s uncertainties.' },
+                        { letter: 'C', text: 'Finding endless, authentic material for my own writing / filmmaking.' },
+                        { letter: 'D', text: 'In this expensive city, finding a family of people I can laugh stupidly with.' }
+                    ]}
+                ]
+            };
+
+            // 结果定义：每个方向都融入了跨文化视角
+            const resultDefs = {
+                A: {
+                    emoji: '🌊',
+                    color: '#4a7c96',
+                    zh: {
+                        typeName: '东·静观者',
+                        tagline: '你不喧嚣，但你的存在本身就是一种气场。',
+                        badge: '高语境 · 情感雷达 · 团队定心丸',
+                        desc: '<p>你相信沉默比喧嚣更有力量，一个眼神的确认比千言万语更动人。在跨文化场景中，你就像一座无声的桥——当语言失效时，你依然能用停顿和距离传递理解。你擅长感知那些“没说出口的话”，无论对方来自哪种文化背景。</p><p>你不常做抛梗的人，却是那个让不同世界的队友都感到<strong>被看见</strong>的灵魂。</p>',
+                        extra: '💡 适合你的即兴方向：非语言表达、情绪流动、跨文化深度倾听。'
+                    },
+                    en: {
+                        typeName: 'East · The Quiet Observer',
+                        tagline: 'You don’t need to be loud — your presence alone speaks volumes.',
+                        badge: 'High-context · Emotional radar · Ensemble anchor',
+                        desc: '<p>You trust silence more than noise, and a single glance can carry more weight than a monologue. In cross-cultural moments, you become a quiet bridge—when words fail, you still communicate through pause and proximity. You sense what remains unspoken, no matter where someone comes from.</p><p>You may not always throw the punchline, but you are the soul that makes every teammate feel <strong>truly seen</strong>.</p>',
+                        extra: '💡 Your improv superpower: non-verbal storytelling, emotional flow, deep cross-cultural listening.'
+                    }
+                },
+                B: {
+                    emoji: '🐙',
+                    color: '#6b9e6b',
+                    zh: {
+                        typeName: '西·收藏家',
+                        tagline: '你的灵魂里住着一个没长大的孩子——或者说，一只橘猫？',
+                        badge: '肢体派 · 勇敢探索者 · 行走的表情包',
+                        desc: '<p>你用全身说话，怪癖就是你打破文化边界的万能钥匙。当你变成一个九十岁老太或者六岁小孩时，来自任何国家的人都会瞬间看懂你。在你眼里，文化差异不是障碍，而是可以拿来玩的<strong>新玩具</strong>——一个奇怪的动作就能让全场笑成一团。</p><p>在东西即兴，你就是那个把“不一样”变成“一起玩”的魔法师。</p>',
+                        extra: '💡 适合你的即兴方向：角色塑造、肢体喜剧、用身体跨越语言。'
+                    },
+                    en: {
+                        typeName: 'West · The Collector',
+                        tagline: 'There’s a playful kid living in your soul — or maybe an orange cat?',
+                        badge: 'Physical performer · Bold explorer · Walking meme',
+                        desc: '<p>You speak with your whole body, and your quirks are the universal key that unlocks any cultural barrier. When you become a 90-year-old or a 6-year-old in a split second, people from every background instantly get you. To you, cultural differences aren’t obstacles—they’re <strong>new toys</strong> to play with.</p><p>At DongXi, you’re the magician who turns “difference” into “let’s play together.”</p>',
+                        extra: '💡 Your improv superpower: character work, physical comedy, bridging cultures through the body.'
+                    }
+                },
+                C: {
+                    emoji: '🌙',
+                    color: '#7b6b8e',
+                    zh: {
+                        typeName: '南·架构师',
+                        tagline: '哪怕在最混乱的即兴里，你脑子里也有一根线在编织故事。',
+                        badge: '叙事控 · 跨文化编剧思维 · 金句制造机',
+                        desc: '<p>你喜欢琢磨不同语言里的表达差异，一个巧妙的双关语能让你兴奋半天。你用<strong>故事</strong>作为跨文化的通用货币——在看似毫不相关的文化碎片之间，你总能找到一条叙事线把它们串起来。你相信，每个文化里都有等待被讲述的共通情感。</p><p>当大家在胡闹时，你是那个默默把多元声音<strong>编织成诗</strong>的人。</p>',
+                        extra: '💡 适合你的即兴方向：叙事结构、语言游戏、在差异中寻找共鸣。'
+                    },
+                    en: {
+                        typeName: 'South · The Architect',
+                        tagline: 'Even in the most chaotic improv, a thread is weaving story in your mind.',
+                        badge: 'Narrative lover · Cross-cultural writer · Catchphrase crafter',
+                        desc: '<p>You love studying how expression shifts across languages—a clever pun can make your whole day. You use <strong>story</strong> as the universal currency across cultures. Among seemingly unrelated cultural fragments, you always find a narrative thread to connect them. You believe every culture holds shared emotions waiting to be told.</p><p>While others goof around, you’re the one quietly weaving diverse voices <strong>into poetry</strong>.</p>',
+                        extra: '💡 Your improv superpower: narrative structure, wordplay, finding resonance across differences.'
+                    }
+                },
+                D: {
+                    emoji: '☀️',
+                    color: '#e0a940',
+                    zh: {
+                        typeName: '北·充电宝',
+                        tagline: '你拥有一项最厉害的即兴超能力：让所有人都感到舒服和开心。',
+                        badge: '气氛担当 · 社群粘合剂 · 天生的观众',
+                        desc: '<p>你不在乎深刻的哲学讨论，你在乎的是“这个晚上大家玩得开不开心”。你的笑声和热情<strong>不需要翻译</strong>——一个鬼脸、一次招呼，就能让来自地球任何角落的人瞬间放松下来。你把即兴现场变成了一个温暖的客厅，无论对方的文化背景是什么。</p><p>你的存在定义了东西即兴的<strong>温度</strong>，让不同世界的人愿意留下来。</p>',
+                        extra: '💡 适合你的即兴方向：团体游戏、氛围带动、用笑声连接多元文化。'
+                    },
+                    en: {
+                        typeName: 'North · The Power Bank',
+                        tagline: 'Your ultimate improv superpower: making everyone feel comfortable and happy.',
+                        badge: 'Vibe leader · Community glue · Born audience',
+                        desc: '<p>You don’t care about deep philosophical debates—you care about one thing: <strong>"Did everyone have a good time tonight?"</strong> Your laughter and warmth need no translation. A silly face, a welcoming gesture, and instantly people from any corner of the world feel at ease. You turn the improv space into a cozy living room, no matter the cultural background.</p><p>Your presence defines the <strong>warmth</strong> of DongXi, making people from different worlds want to stay.</p>',
+                        extra: '💡 Your improv superpower: group games, lifting the energy, connecting diverse cultures through laughter.'
+                    }
+                }
+            };
+
+            const uiText = {
+                zh: {
+                    mainTitle: '东西即兴人格测试',
+                    mainSubtitle: '15道题，找到你在即兴宇宙里的专属角色',
+                    startBtn: '✨ 开始探测',
+                    nextBtn: '下一题 →',
+                    prevBtn: '← 上一题',
+                    resultBtn: '查看结果 ✨',
+                    tieMessage: '🤝 平票！你是一个多面体',
+                    tieSub: '即兴人本身就是复杂多面的——以下类型都是你。',
+                    scoreDist: '📊 你的得分分布',
+                    restartBtn: '🔄 重新测试',
+                    progressLabel: '/15',
+                    wrongTitle: '恭喜你，你答错了！',
+                    wrongBtn: '继续答题'
+                },
+                en: {
+                    mainTitle: 'DongXi Improv Personality Test',
+                    mainSubtitle: '15 questions to find your role in the improv universe.',
+                    startBtn: '✨ Start Detection',
+                    nextBtn: 'Next →',
+                    prevBtn: '← Previous',
+                    resultBtn: 'See My Result ✨',
+                    tieMessage: '🤝 It’s a tie! You’re a multi-faceted player',
+                    tieSub: 'Improvisers are wonderfully complex — all these types are you.',
+                    scoreDist: '📊 Your score breakdown',
+                    restartBtn: '🔄 Retake the test',
+                    progressLabel: '/15',
+                    wrongTitle: 'Congrats! You got it wrong!',
+                    wrongBtn: 'Continue'
+                }
+            };
+
+            let currentQuestionIndex = 0;
+            let answers = [];
+            let selectedLetter = null;
+
+            const contentArea = document.getElementById('contentArea');
+            const progressWrap = document.getElementById('progressWrap');
+            const progressBar = document.getElementById('progressBar');
+            const progressLabel = document.getElementById('progressLabel');
+            const mainTitle = document.getElementById('mainTitle');
+            const mainSubtitle = document.getElementById('mainSubtitle');
+            const langLabel = document.getElementById('langLabel');
+
+            function getText(key) { return uiText[currentLang][key] || ''; }
+            function getQuizData() { return quizData[currentLang]; }
+            function getResultDef(type) { return resultDefs[type][currentLang]; }
+
+            function updateProgressUI() {
+                const answered = answers.filter(a => a !== undefined).length;
+                const percent = Math.round((answered / 15) * 100);
+                progressBar.style.width = percent + '%';
+                progressLabel.textContent = answered + getText('progressLabel');
+            }
+
+            function renderStart() {
+                progressWrap.classList.add('hidden');
+                contentArea.innerHTML = `
+                <div class="card" style="text-align:center; gap:20px;">
+                  <span style="font-size:56px;display:block;">🧭</span>
+                  <h2 style="font-size:1.3rem;font-weight:700;margin:0;">${getText('mainTitle')}</h2>
+                  <p style="font-size:0.95rem;color:var(--text-light);line-height:1.7;">${getText('mainSubtitle')}</p>
+                  <button class="btn btn-primary" onclick="startQuiz()" style="align-self:center;margin-top:4px;">${getText('startBtn')}</button>
+                </div>
+              `;
+            }
+
+            function startQuiz() {
+                currentQuestionIndex = 0;
+                answers = [];
+                selectedLetter = null;
+                progressWrap.classList.remove('hidden');
+                updateProgressUI();
+                renderQuestion();
+            }
+
+            function renderQuestion() {
+                const q = getQuizData()[currentQuestionIndex];
+                selectedLetter = null;
+                contentArea.innerHTML = `
+                <div class="card" id="questionCard">
+                  <span class="section-tag">${q.section}</span>
+                  <p class="question-text">${currentQuestionIndex + 1}. ${q.question}</p>
+                  <div class="options-list">
+                    ${q.options.map(opt => `
+                      <button class="option-btn" data-letter="${opt.letter}" onclick="selectOption('${opt.letter}', this)">
+                        <span class="option-letter">${opt.letter}</span>
+                        <span>${opt.text}</span>
+                      </button>
+                    `).join('')}
+                  </div>
+                  <div class="btn-row" style="margin-top:4px;">
+                    ${currentQuestionIndex > 0 ? `<button class="btn btn-outline" onclick="prevQuestion()">${getText('prevBtn')}</button>` : ''}
+                    <button class="btn btn-primary" id="nextBtn" disabled onclick="nextQuestion()">
+                      ${currentQuestionIndex < 14 ? getText('nextBtn') : getText('resultBtn')}
+                    </button>
+                  </div>
+                </div>
+              `;
+                document.getElementById('questionCard')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function showWrongAnswerPopup() {
+                const existing = document.querySelector('.popup-overlay');
+                if (existing) existing.remove();
+                const overlay = document.createElement('div');
+                overlay.className = 'popup-overlay';
+                overlay.innerHTML = `
+                    <div class="popup-card">
+                        <div class="popup-text">${getText('wrongTitle')}</div>
+                        <button class="popup-btn" id="closePopupBtn">${getText('wrongBtn')}</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+                document.getElementById('closePopupBtn').addEventListener('click', () => {
+                    overlay.remove();
+                });
+            }
+
+            function selectOption(letter, btnEl) {
+                // 第10题（索引9）选B只是玩笑，不记录答案，弹出弹窗
+                if (currentQuestionIndex === 9 && letter === 'B') {
+                    showWrongAnswerPopup();
+                    return;
+                }
+                document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                btnEl.classList.add('selected');
+                selectedLetter = letter;
+                const nextBtn = document.getElementById('nextBtn');
+                if (nextBtn) nextBtn.disabled = false;
+            }
+
+            function nextQuestion() {
+                if (!selectedLetter) return;
+                // 第10题（索引9）不会走到这里，因为选B被拦截；选A正常记录
+                answers[currentQuestionIndex] = selectedLetter;
+                selectedLetter = null;
+                if (currentQuestionIndex < 14) {
+                    currentQuestionIndex++;
+                    updateProgressUI();
+                    renderQuestion();
+                    setTimeout(() => {
+                        document.getElementById('questionCard')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 50);
+                } else {
+                    showResult();
+                }
+            }
+
+            function prevQuestion() {
+                if (currentQuestionIndex > 0) {
+                    if (selectedLetter) answers[currentQuestionIndex] = selectedLetter;
+                    currentQuestionIndex--;
+                    selectedLetter = null;
+                    updateProgressUI();
+                    renderQuestion();
+                    if (answers[currentQuestionIndex]) {
+                        const prevLetter = answers[currentQuestionIndex];
+                        setTimeout(() => {
+                            const btns = document.querySelectorAll('.option-btn');
+                            btns.forEach(b => {
+                                if (b.dataset.letter === prevLetter) {
+                                    b.classList.add('selected');
+                                    selectedLetter = prevLetter;
+                                    const nextBtn = document.getElementById('nextBtn');
+                                    if (nextBtn) nextBtn.disabled = false;
+                                }
+                            });
+                        }, 60);
+                    }
+                    setTimeout(() => {
+                        document.getElementById('questionCard')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 50);
+                }
+            }
+
+            function showResult() {
+                progressWrap.classList.add('hidden');
+                const counts = { A: 0, B: 0, C: 0, D: 0 };
+                answers.forEach(a => { if (a) counts[a]++; });
+                const maxCount = Math.max(counts.A, counts.B, counts.C, counts.D);
+                const topTypes = Object.keys(counts).filter(k => counts[k] === maxCount);
+
+                if (topTypes.length === 1) {
+                    const type = topTypes[0];
+                    const def = getResultDef(type);
+                    const color = resultDefs[type].color;
+                    const emoji = resultDefs[type].emoji;
+                    contentArea.innerHTML = `
+                    <div class="result-card">
+                      <span class="result-emoji">${emoji}</span>
+                      <div class="result-badge">${def.badge}</div>
+                      <h2 class="result-type-name" style="color:${color};">${def.typeName}</h2>
+                      <p class="result-tagline">${def.tagline}</p>
+                      <div class="result-divider" style="background:${color};"></div>
+                      <div class="result-desc">${def.desc}</div>
+                      <div class="result-extra">${def.extra}</div>
+                      <div style="font-size:0.8rem;color:#9b8e84;margin-top:4px;">${getText('scoreDist')}：A=${counts.A} · B=${counts.B} · C=${counts.C} · D=${counts.D}</div>
+                      <button class="btn btn-primary" onclick="restartQuiz()" style="align-self:center;margin-top:4px;">${getText('restartBtn')}</button>
+                    </div>
+                  `;
+                } else {
+                    const cardsHTML = topTypes.map(type => {
+                        const def = getResultDef(type);
+                        const color = resultDefs[type].color;
+                        const emoji = resultDefs[type].emoji;
+                        return `
+                      <div class="result-card" style="border:2px solid ${color};">
+                        <span class="result-emoji">${emoji}</span>
+                        <div class="result-badge">${def.badge}</div>
+                        <h2 class="result-type-name" style="color:${color};">${def.typeName}</h2>
+                        <p class="result-tagline">${def.tagline}</p>
+                        <div class="result-divider" style="background:${color};"></div>
+                        <div class="result-desc">${def.desc}</div>
+                        <div class="result-extra">${def.extra}</div>
+                      </div>
+                    `;
+                    }).join('');
+                    contentArea.innerHTML = `
+                    <div style="text-align:center;margin-bottom:8px;">
+                      <span style="font-size:1.1rem;font-weight:600;">${getText('tieMessage')}</span>
+                      <p style="font-size:0.85rem;color:var(--text-light);margin-top:4px;">${getText('tieSub')}</p>
+                    </div>
+                    <div class="multi-result">${cardsHTML}</div>
+                    <div style="text-align:center;font-size:0.8rem;color:#9b8e84;margin-top:12px;">${getText('scoreDist')}：A=${counts.A} · B=${counts.B} · C=${counts.C} · D=${counts.D}</div>
+                    <button class="btn btn-primary" onclick="restartQuiz()" style="display:block;margin:16px auto 0;">${getText('restartBtn')}</button>
+                  `;
+                }
+                setTimeout(() => {
+                    const card = contentArea.querySelector('.result-card');
+                    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+
+            function restartQuiz() {
+                currentQuestionIndex = 0;
+                answers = [];
+                selectedLetter = null;
+                progressWrap.classList.add('hidden');
+                progressBar.style.width = '0%';
+                progressLabel.textContent = '0' + getText('progressLabel');
+                renderStart();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function toggleLanguage() {
+                currentLang = currentLang === 'zh' ? 'en' : 'zh';
+                langLabel.textContent = currentLang === 'zh' ? 'EN' : '中';
+                mainTitle.textContent = getText('mainTitle');
+                mainSubtitle.textContent = getText('mainSubtitle');
+                const isResult = contentArea.querySelector('.result-card') || contentArea.querySelector('.multi-result');
+                if (isResult) {
+                    showResult();
+                } else if (progressWrap.classList.contains('hidden')) {
+                    renderStart();
+                } else {
+                    updateProgressUI();
+                    renderQuestion();
+                    if (answers[currentQuestionIndex]) {
+                        const prevLetter = answers[currentQuestionIndex];
+                        setTimeout(() => {
+                            const btns = document.querySelectorAll('.option-btn');
+                            btns.forEach(b => {
+                                if (b.dataset.letter === prevLetter) {
+                                    b.classList.add('selected');
+                                    selectedLetter = prevLetter;
+                                    const nextBtn = document.getElementById('nextBtn');
+                                    if (nextBtn) nextBtn.disabled = false;
+                                }
+                            });
+                        }, 60);
+                    }
+                }
+            }
+
+            window.startQuiz = startQuiz;
+            window.selectOption = selectOption;
+            window.nextQuestion = nextQuestion;
+            window.prevQuestion = prevQuestion;
+            window.restartQuiz = restartQuiz;
+            window.toggleLanguage = toggleLanguage;
+
+            renderStart();
+        })();
+    </script>
+</body>
+</html>
