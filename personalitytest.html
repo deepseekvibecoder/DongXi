@@ -340,6 +340,21 @@
             text-align: left;
             border-left: 3px solid var(--accent);
         }
+        .community-info {
+            background: #fffaf5;
+            border-radius: var(--radius);
+            padding: 24px 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #4a3f3a;
+            border: 1px solid rgba(0,0,0,0.02);
+            margin-top: 8px;
+        }
+        .community-info strong {
+            color: var(--accent);
+        }
         .multi-result {
             display: flex;
             flex-direction: column;
@@ -351,7 +366,6 @@
         .hidden {
             display: none !important;
         }
-        /* 错误弹窗样式 */
         .popup-overlay {
             position: fixed;
             top: 0;
@@ -417,6 +431,7 @@
             .btn { padding: 12px 22px; font-size: 0.9rem; }
             .lang-switch { padding: 4px 10px; font-size: 0.7rem; }
             .popup-text { font-size: 1.8rem; }
+            .community-info { padding: 20px 16px; font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -442,11 +457,10 @@
         (function() {
             let currentLang = 'zh';
 
-            // 题目数据
             const quizData = {
                 zh: [
                     { section: '第一部分：舞台上的本能', question: '在即兴游戏开始时，你脑子里第一个念头通常是？', options: [
-                        { letter: 'A', text: '我要看看队友想干嘛，全力配合他/她。' },
+                        { letter: 'A', text: '我要看看队友想干嘛，全力配合TA。' },
                         { letter: 'B', text: '我要用身体做一个很有趣、很奇怪的姿势。' },
                         { letter: 'C', text: '我听到了一个特别的词，想把它变成一个有趣的世界观。' },
                         { letter: 'D', text: '我想观察台下观众的表情，找一个能逗笑他们的点。' }
@@ -455,7 +469,7 @@
                         { letter: 'A', text: '享受这几秒沉默，觉得情绪流动比硬填词更重要。' },
                         { letter: 'B', text: '走上去做一个具体的家务动作（比如切菜、扫地），用行动打破尴尬。' },
                         { letter: 'C', text: '突然说一句看似无关但很诗意的话，比如“外面的雨好像停了”。' },
-                        { letter: 'D', text: '拍拍队友肩膀，对他/她做一个鬼脸，把压力变成玩笑。' }
+                        { letter: 'D', text: '拍拍队友肩膀，对TA做一个鬼脸，把压力变成玩笑。' }
                     ]},
                     { section: '第一部分：舞台上的本能', question: '对于舞台上的“犯错”或“口误”，你的态度是？', options: [
                         { letter: 'A', text: '那是礼物。顺着错误走下去往往能开出最意想不到的花。' },
@@ -525,7 +539,7 @@
                         { letter: 'A', text: '反思自己是不是没接住队友给的信号，下次要多听。' },
                         { letter: 'B', text: '思考是不是自己的肢体或者角色太抢戏了，但保留那个奇怪的闪光点。' },
                         { letter: 'C', text: '“自我”是因为我有强烈的表达欲，也许我只是需要一个更懂我的队友。' },
-                        { letter: 'D', text: '开玩笑地回他：“因为刚才那一秒，场上只有我配得上那个时刻！”' }
+                        { letter: 'D', text: '开玩笑地回TA：“因为刚才那一秒，场上只有我配得上那个时刻！”' }
                     ]},
                     { section: '第五部分：终极选择', question: '你希望即兴带给你未来生活最大的改变是？', options: [
                         { letter: 'A', text: '成为一个更能读懂空气、更敏锐的“人类观察家”。' },
@@ -626,7 +640,6 @@
                 ]
             };
 
-            // 结果定义：每个方向都融入了跨文化视角
             const resultDefs = {
                 A: {
                     emoji: '🌊',
@@ -716,7 +729,8 @@
                     restartBtn: '🔄 重新测试',
                     progressLabel: '/15',
                     wrongTitle: '恭喜你，你答错了！',
-                    wrongBtn: '继续答题'
+                    wrongBtn: '继续答题',
+                    communityIntro: '东西即兴是base在上海的中英双语即兴戏剧社群，每周四晚上在新华路有游戏坊！<br>主理人微信：<strong>Grace_improv</strong><br>公众号：<strong>东西即兴 DongXi Improv</strong><br>小红书：<strong>东西即兴 DongXi Improv</strong><br>Instagram：<strong>@dongxi_improv</strong>'
                 },
                 en: {
                     mainTitle: 'DongXi Improv Personality Test',
@@ -731,7 +745,8 @@
                     restartBtn: '🔄 Retake the test',
                     progressLabel: '/15',
                     wrongTitle: 'Congrats! You got it wrong!',
-                    wrongBtn: 'Continue'
+                    wrongBtn: 'Continue',
+                    communityIntro: 'DongXi Improv is a bilingual improv theatre community based in Shanghai, hosting GameShop every Thursday night on Xinhua Road!<br>WeChat: <strong>Grace_improv</strong><br>Official Account: <strong>东西即兴 DongXi Improv</strong><br>Rednote: <strong>东西即兴 DongXi Improv</strong><br>Instagram: <strong>@dongxi_improv</strong>'
                 }
             };
 
@@ -823,7 +838,6 @@
             }
 
             function selectOption(letter, btnEl) {
-                // 第10题（索引9）选B只是玩笑，不记录答案，弹出弹窗
                 if (currentQuestionIndex === 9 && letter === 'B') {
                     showWrongAnswerPopup();
                     return;
@@ -837,7 +851,6 @@
 
             function nextQuestion() {
                 if (!selectedLetter) return;
-                // 第10题（索引9）不会走到这里，因为选B被拦截；选A正常记录
                 answers[currentQuestionIndex] = selectedLetter;
                 selectedLetter = null;
                 if (currentQuestionIndex < 14) {
@@ -886,6 +899,12 @@
                 const maxCount = Math.max(counts.A, counts.B, counts.C, counts.D);
                 const topTypes = Object.keys(counts).filter(k => counts[k] === maxCount);
 
+                const communityHTML = `
+                <div class="community-info">
+                  ${getText('communityIntro')}
+                </div>
+              `;
+
                 if (topTypes.length === 1) {
                     const type = topTypes[0];
                     const def = getResultDef(type);
@@ -903,6 +922,7 @@
                       <div style="font-size:0.8rem;color:#9b8e84;margin-top:4px;">${getText('scoreDist')}：A=${counts.A} · B=${counts.B} · C=${counts.C} · D=${counts.D}</div>
                       <button class="btn btn-primary" onclick="restartQuiz()" style="align-self:center;margin-top:4px;">${getText('restartBtn')}</button>
                     </div>
+                    ${communityHTML}
                   `;
                 } else {
                     const cardsHTML = topTypes.map(type => {
@@ -929,6 +949,7 @@
                     <div class="multi-result">${cardsHTML}</div>
                     <div style="text-align:center;font-size:0.8rem;color:#9b8e84;margin-top:12px;">${getText('scoreDist')}：A=${counts.A} · B=${counts.B} · C=${counts.C} · D=${counts.D}</div>
                     <button class="btn btn-primary" onclick="restartQuiz()" style="display:block;margin:16px auto 0;">${getText('restartBtn')}</button>
+                    ${communityHTML}
                   `;
                 }
                 setTimeout(() => {
